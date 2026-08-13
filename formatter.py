@@ -1,5 +1,10 @@
 import json
 
+def format_value(value):
+    if value is None:
+        return "NULL"
+
+    return str(value)
 
 def render(response):
 
@@ -30,7 +35,7 @@ def render(response):
         for i, v in enumerate(r):
             column_widths[i] = max(
                 column_widths[i],
-                len(str(v))
+                len(format_value(v))
             )
 
     out = []
@@ -49,7 +54,7 @@ def render(response):
     for r in rows:
         out.append(
             "  ".join(
-                str(v).ljust(column_widths[i])
+                format_value(v).ljust(column_widths[i])
                 for i, v in enumerate(r)
             )
         )

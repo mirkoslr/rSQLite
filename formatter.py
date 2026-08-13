@@ -1,10 +1,20 @@
 import json
 
-def format_value(value):
-    if value is None:
-        return "NULL"
 
-    return str(value)
+def format_value(value, width=None):
+    if value is None:
+        text = "NULL"
+    else:
+        text = str(value)
+
+    if width is None:
+        return text
+
+    if isinstance(value, (int, float)):
+        return text.rjust(width)
+
+    return text.ljust(width)
+
 
 def render(response):
 
@@ -54,7 +64,7 @@ def render(response):
     for r in rows:
         out.append(
             "  ".join(
-                format_value(v).ljust(column_widths[i])
+                format_value(v, column_widths[i])
                 for i, v in enumerate(r)
             )
         )

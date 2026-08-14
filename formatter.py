@@ -29,9 +29,10 @@ def render(response):
     if not response.get("ok", False):
         return "SQL error: " + response.get("error", "Unknown error")
 
-    # Extract columns and rows from the query response.
+    # Extract columns, rows, and execution time from the query response.
     cols = response.get("columns", [])
     rows = response.get("rows", [])
+    execution_time_ms = response.get("execution_time", 0) * 1000
 
     # If there are no columns, the query did not return a result set.
     if not cols:
@@ -71,7 +72,8 @@ def render(response):
 
     out.append("")
     out.append(
-        f"{len(rows)} row{'s' if len(rows) != 1 else ''} returned"
+       f"{len(rows)} row{'s' if len(rows) != 1 else ''} returned "
+       f"({execution_time_ms:.2f} ms)"
     )
 
     return "\n".join(out)

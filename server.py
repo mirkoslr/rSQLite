@@ -10,6 +10,7 @@ import argparse
 import json
 import sqlite3
 import time
+from tracemalloc import start
 
 import RNS
 from identity import prepare_identity
@@ -24,17 +25,28 @@ def execute_sql(sql):
     try:
         with sqlite3.connect(_database_file) as db:
             cur=db.cursor()
+            start = time.perf_counter()
             cur.execute(sql)
 
             if cur.description is None:
                 db.commit()
-                return {"ok":True,"rows_affected":cur.rowcount}
+                elapsed = time.perf_counter() - start
+                
+                return {"ok":True,
+                        "rows_affected":cur.rowcount,
+                        "execution_time": elapsed
+                        }
+
+            rows = cur.fetchall()
+            elapsed = time.perf_counter() - start
 
             return {
                 "ok":True,
                 "columns":[c[0] for c in cur.description],
-                "rows":cur.fetchall()
+                "rows":rows,
+                "execution_time": elapsed
             }
+        
     except Exception as e:
         return {"ok":False,"error":str(e)}
 

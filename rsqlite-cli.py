@@ -61,6 +61,25 @@ def choose_server(servers):
 
         print("Invalid selection.")
 
+def print_help():
+    print("""Commands:
+  .help       Show this help
+  .tables     List tables
+  .schema     Show table schema
+  .indexes    List indexes
+  .databases  List databases
+  .version    Show rSQL version
+  .quit       Exit rSQL
+  .exit       Exit rSQL""")
+    
+def dispatch_command(line):
+    if line in (".quit", ".exit"):
+        return "quit"
+
+    if line == ".help":
+        return "help"
+
+    return None
 
 def sql_prompt():
     
@@ -77,6 +96,14 @@ def sql_prompt():
 
         line = line.strip()
 
+        command = dispatch_command(line)
+
+        if command == "quit":
+           break
+        if command == "help":
+            print_help()
+            continue
+        
         # Empty line: execute a single-line query.
         if not line and not lines:
             continue

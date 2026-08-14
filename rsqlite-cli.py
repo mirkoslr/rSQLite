@@ -63,24 +63,53 @@ def choose_server(servers):
 
 
 def sql_prompt():
+    
+    lines = []
+
     while True:
         try:
-            query = input("rSQL> ").strip()
+            prompt = "rSQL> " if not lines else "...   "
+            line = input(prompt)
+
         except (EOFError, KeyboardInterrupt):
             print()
             break
 
-        if not query:
+        line = line.strip()
+
+        # Empty line: execute a single-line query.
+        if not line and not lines:
             continue
 
-        if query in (".quit", ".exit"):
+        # Empty line after starting a query: execute it.
+        if not line and lines:
+            query = "\n".join(lines)
+            lines = []
+
+            try:
+                response = transport.execute(query)
+                print(formatter.render(response))
+            except Exception as e:
+                print(f"Error: {e}")
+
+            continue
+
+        # CLI commands are handled at the main prompt.
+        if not lines and line in (".quit", ".exit"):
             break
 
-        try:
-            response = transport.execute(query)
-            print(formatter.render(response))
-        except Exception as e:
-            print(f"Error: {e}")
+        lines.append(line)
+
+        # Semicolon terminates the SQL statement.
+        if line.endswith(";"):
+            query = "\n".join(lines)
+            lines = []
+
+            try:
+                response = transport.execute(query)
+                print(formatter.render(response))
+            except Exception as e:
+                print(f"Error: {e}")
 
 
 def main():

@@ -63,17 +63,26 @@ def choose_server(servers):
 
 
 def dispatch_command(line):
-    if line in (".quit", ".exit"):
+    parts = line.split()
+
+    if not parts:
+        return None, None
+
+    if parts[0] in (".quit", ".exit"):
         return "quit", None
 
-    if line == ".help":
+    if parts[0] == ".help":
         return "help", None
 
-    if line == ".tables":
+    if parts[0] == ".tables":
         return "tables", None
-    
-    if line == ".schema":
-        return "schema", None
+
+    if parts[0] == ".schema":
+        arg = parts[1] if len(parts) > 1 else None
+        return "schema", arg
+
+    if parts[0] == ".indexes":
+        return "indexes", None
 
     return None, None
 
@@ -105,6 +114,14 @@ ORDER BY name;
 SELECT name, sql
 FROM sqlite_master
 WHERE type = 'table'
+ORDER BY name;
+"""
+
+    elif cmd == "indexes":
+       query = """
+SELECT name
+FROM sqlite_master
+WHERE type = 'index'
 ORDER BY name;
 """
     response = transport.execute(query)

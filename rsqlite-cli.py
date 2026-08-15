@@ -61,8 +61,27 @@ def choose_server(servers):
 
         print("Invalid selection.")
 
-def print_help():
-    print("""Commands:
+
+def dispatch_command(line):
+    if line in (".quit", ".exit"):
+        return "quit", None
+
+    if line == ".help":
+        return "help", None
+
+    if line == ".tables":
+        return "tables", None
+    
+    if line == ".schema":
+        return "schema", None
+
+    return None, None
+
+
+def execute_command(cmd, arg):
+
+    if cmd == "help":
+        print("""Commands:
   .help       Show this help
   .tables     List tables
   .schema     Show table schema
@@ -71,21 +90,27 @@ def print_help():
   .version    Show rSQL version
   .quit       Exit rSQL
   .exit       Exit rSQL""")
+        return 
     
-def dispatch_command(line):
-    if line in (".quit", ".exit"):
-        return "quit"
+    elif cmd == "tables":
+        query = """
+SELECT name
+FROM sqlite_master
+WHERE type = 'table'
+ORDER BY name;
+"""
 
-    if line == ".help":
-        return "help"
-
-    if line == ".tables":
-     return "tables"
-
-    return None
+    elif cmd == "schema":
+        query = """
+SELECT name, sql
+FROM sqlite_master
+WHERE type = 'table'
+ORDER BY name;
+"""
+    response = transport.execute(query)
+    print(formatter.render(response))
 
 def sql_prompt():
-    
     lines = []
 
     while True:
@@ -99,25 +124,15 @@ def sql_prompt():
 
         line = line.strip()
 
-        command = dispatch_command(line)
+        cmd, arg = dispatch_command(line)
 
-        if command == "quit":
-           break
-        if command == "help":
-            print_help()
+        if cmd == "quit":
+            break
+
+        if cmd:
+            execute_command(cmd, arg)
             continue
 
-        if command == "tables":
-             query = """
-        SELECT name
-        FROM sqlite_master
-        WHERE type = 'table'
-        ORDER BY name;
-        """
-             response = transport.execute(query)
-             print(formatter.render(response))
-             continue
-        
         # Empty line: execute a single-line query.
         if not line and not lines:
             continue
@@ -134,10 +149,6 @@ def sql_prompt():
                 print(f"Error: {e}")
 
             continue
-
-        # CLI commands are handled at the main prompt.
-        if not lines and line in (".quit", ".exit"):
-            break
 
         lines.append(line)
 

@@ -132,7 +132,7 @@ def execute(query):
 
     _reply_ready.clear()
 
-    RNS.log("Sending SQL request")
+    # RNS.log("Sending SQL request")
 
     _link.request(
         REQUEST_NAME,

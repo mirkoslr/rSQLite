@@ -10,6 +10,7 @@ import formatter
 import transport
 
 CONFIG_FILE = "rsqlite.conf"
+VERSION = "0.1.0"
 
 
 def load_config(filename):
@@ -87,6 +88,9 @@ def dispatch_command(line):
     if parts[0] == ".databases":
         return "databases", None
 
+    if parts[0] == ".version":
+        return "version", None
+
     return None, None
 
 
@@ -131,6 +135,12 @@ ORDER BY name;
     elif cmd == "databases":
        query = """
 PRAGMA database_list;
+"""
+
+    elif cmd == "version":
+      print(f"rSQLite version {VERSION}")
+      query = """
+SELECT sqlite_version();
 """
     response = transport.execute(query)
     print(formatter.render(response))

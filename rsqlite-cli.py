@@ -84,6 +84,9 @@ def dispatch_command(line):
     if parts[0] == ".indexes":
         return "indexes", None
 
+    if parts[0] == ".databases":
+        return "databases", None
+
     return None, None
 
 
@@ -123,6 +126,11 @@ SELECT name
 FROM sqlite_master
 WHERE type = 'index'
 ORDER BY name;
+"""
+
+    elif cmd == "databases":
+       query = """
+PRAGMA database_list;
 """
     response = transport.execute(query)
     print(formatter.render(response))

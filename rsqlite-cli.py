@@ -79,6 +79,9 @@ def dispatch_command(line):
     if line == ".help":
         return "help"
 
+    if line == ".tables":
+     return "tables"
+
     return None
 
 def sql_prompt():
@@ -103,6 +106,17 @@ def sql_prompt():
         if command == "help":
             print_help()
             continue
+
+        if command == "tables":
+             query = """
+        SELECT name
+        FROM sqlite_master
+        WHERE type = 'table'
+        ORDER BY name;
+        """
+             response = transport.execute(query)
+             print(formatter.render(response))
+             continue
         
         # Empty line: execute a single-line query.
         if not line and not lines:

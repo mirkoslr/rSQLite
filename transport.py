@@ -24,6 +24,17 @@ APP_NAME = "rsqlite"
 SERVICE_NAME = "database"
 REQUEST_NAME = "sql"
 
+_debug = False
+
+def set_debug(enabled):
+    global _debug
+    _debug = enabled
+
+    if enabled:
+        RNS.loglevel = RNS.LOG_VERBOSE
+    else:
+        RNS.loglevel = RNS.LOG_CRITICAL
+
 _reticulum = None
 _identity = None
 _link = None
@@ -79,6 +90,7 @@ def connect(identity_file, destination_hash):
 
     if _reticulum is None:
         _reticulum = RNS.Reticulum()
+        set_debug(_debug)
 
     _identity = prepare_identity(identity_file)
 

@@ -6,9 +6,6 @@ import readline
 import pathlib
 import sys
 
-
-
-import RNS
 import formatter
 import transport
 
@@ -219,7 +216,7 @@ def main():
     args = parser.parse_args()
 
     # Quiet by default, verbose only when debugging.
-    RNS.loglevel = RNS.LOG_VERBOSE if args.debug else RNS.LOG_CRITICAL
+    transport.set_debug(args.debug)
 
     identity_file, servers = load_config(args.config)
 

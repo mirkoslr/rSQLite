@@ -2,8 +2,11 @@
 
 import argparse
 import configparser
+import readline
 import pathlib
 import sys
+
+
 
 import RNS
 import formatter

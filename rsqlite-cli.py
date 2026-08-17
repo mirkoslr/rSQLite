@@ -1,46 +1,14 @@
 #!/usr/bin/env python3
 
 import argparse
-import configparser
 import readline
-import pathlib
-import sys
 
+import config
 import formatter
 import transport
 
 CONFIG_FILE = "rsqlite.conf"
 VERSION = "0.1.0"
-
-
-def load_config(filename):
-    config = configparser.ConfigParser()
-
-    if not pathlib.Path(filename).exists():
-        print(f"Configuration file '{filename}' not found.")
-        sys.exit(1)
-
-    config.read(filename)
-
-    if "identity" not in config:
-        print("Missing [identity] section.")
-        sys.exit(1)
-
-    servers = []
-
-    for section in config.sections():
-        if section.startswith("server."):
-            servers.append({
-                "name": config[section]["name"],
-                "destination_hash": config[section]["destination_hash"]
-            })
-
-    if not servers:
-        print("No servers configured.")
-        sys.exit(1)
-
-    return config["identity"]["file"], servers
-
 
 def choose_server(servers):
     print()
@@ -218,7 +186,7 @@ def main():
     # Quiet by default, verbose only when debugging.
     transport.set_debug(args.debug)
 
-    identity_file, servers = load_config(args.config)
+    identity_file, servers = config.load_config(args.config)
 
     print()
     print("rSQLite")

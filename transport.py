@@ -19,10 +19,7 @@ import time
 import RNS
 
 from identity import prepare_identity
-
-APP_NAME = "rsqlite"
-SERVICE_NAME = "database"
-REQUEST_NAME = "sql"
+from constants import APP_NAME, SERVICE_NAME, REQUEST_NAME
 
 _debug = False
 
@@ -128,7 +125,7 @@ def connect(identity_file, destination_hash):
         raise TimeoutError("Unable to establish Reticulum Link")
 
 
-def execute(query):
+def execute(query: str) -> str:
     """
     Execute a SQL statement on the remote server.
     """

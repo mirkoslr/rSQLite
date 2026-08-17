@@ -20,8 +20,6 @@ def render(response):
 
     # The transport layer normally returns a str.
     # Keep support for bytes in case a raw Reticulum response is passed here.
-    if isinstance(response, bytes):
-        response = response.decode()
 
     if isinstance(response, str):
         response = json.loads(response)

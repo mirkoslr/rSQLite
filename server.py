@@ -10,14 +10,11 @@ import argparse
 import json
 import sqlite3
 import time
-from tracemalloc import start
 
 import RNS
-from identity import prepare_identity
 
-APP_NAME="rsqlite"
-SERVICE_NAME="database"
-REQUEST_NAME="sql"
+from identity import prepare_identity
+from constants import APP_NAME, SERVICE_NAME, REQUEST_NAME
 
 _database_file=None
 

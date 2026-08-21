@@ -59,6 +59,7 @@ def _link_closed(link):
     RNS.log("Link closed")
 
     _link = None
+    _link_ready.clear()
 
 
 def _response_callback(receipt):
@@ -172,3 +173,4 @@ def close():
     if _link is not None:
         _link.teardown()
         _link = None
+    _link_ready.clear()

@@ -88,9 +88,21 @@ def start(identity_file,database_file):
     while True:
         time.sleep(1)
 
-if __name__=="__main__":
-    p=argparse.ArgumentParser()
-    p.add_argument("-i","--identity",default="~/.reticulum/identities/rsqlite-server")
-    p.add_argument("-d","--database",required=True)
-    a=p.parse_args()
-    start(a.identity,a.database)
+if __name__ == "__main__":
+    p = argparse.ArgumentParser()
+
+    p.add_argument(
+        "-i",
+        "--identity",
+        required=True
+    )
+
+    p.add_argument(
+        "-d",
+        "--database",
+        required=True
+    )
+
+    a = p.parse_args()
+
+    start(a.identity, a.database)

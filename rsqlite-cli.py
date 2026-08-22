@@ -10,6 +10,7 @@ import transport
 CONFIG_FILE = "rsqlite.conf"
 VERSION = "0.1.0"
 
+
 def choose_server(servers):
     print()
     print("Available servers")
@@ -74,8 +75,8 @@ def execute_command(cmd, arg):
   .version    Show rSQL version
   .quit       Exit rSQL
   .exit       Exit rSQL""")
-        return 
-    
+        return
+
     elif cmd == "tables":
         query = """
 SELECT name
@@ -93,7 +94,7 @@ ORDER BY name;
 """
 
     elif cmd == "indexes":
-       query = """
+        query = """
 SELECT name
 FROM sqlite_master
 WHERE type = 'index'
@@ -101,17 +102,22 @@ ORDER BY name;
 """
 
     elif cmd == "databases":
-       query = """
+        query = """
 PRAGMA database_list;
 """
 
     elif cmd == "version":
-      print(f"rSQLite version {VERSION}")
-      query = """
+        print(f"rSQLite version {VERSION}")
+        query = """
 SELECT sqlite_version();
 """
-    response = transport.execute(query)
-    print(formatter.render(response))
+
+    try:
+        response = transport.execute(query)
+        print(formatter.render(response))
+    except RuntimeError as e:
+        print(f"Error: {e}")
+
 
 def sql_prompt():
     lines = []
@@ -169,12 +175,14 @@ def sql_prompt():
 
 def main():
     parser = argparse.ArgumentParser(description="rSQLite client")
+
     parser.add_argument(
         "-c",
         "--config",
         default=CONFIG_FILE,
         help="Configuration file"
     )
+
     parser.add_argument(
         "--debug",
         action="store_true",

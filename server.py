@@ -17,6 +17,22 @@ from identity import prepare_identity
 from constants import APP_NAME, SERVICE_NAME, REQUEST_NAME
 
 _database_file=None
+_allowed_identity_hashes = []
+
+def load_allowed_identities(path):
+    allowed = []
+
+    with open(path, "r") as f:
+        for line in f:
+            line = line.strip()
+
+            if not line:
+                continue
+
+            allowed.append(bytes.fromhex(line))
+
+    return allowed
+
 
 def execute_sql(sql):
     try:
@@ -52,19 +68,33 @@ def sql_handler(path,data,request_id,link_id,remote_identity,requested_at):
     RNS.log(f"SQL request: {query}")
     return json.dumps(execute_sql(query)).encode("utf-8")
 
-def remote_identified(link,identity):
-    RNS.log(f"Authenticated peer {RNS.prettyhexrep(identity.hash)}")
+def remote_identified(link, identity):
+    if identity.hash in _allowed_identity_hashes:
+        RNS.log(
+            f"Authorized peer {RNS.prettyhexrep(identity.hash)}"
+        )
+        return
 
+    RNS.log(
+        f"Unauthorized peer {RNS.prettyhexrep(identity.hash)}"
+    )
+
+    link.teardown()
 def client_connected(link):
     RNS.log("Incoming link established")
     link.set_remote_identified_callback(remote_identified)
 
-def start(identity_file,database_file):
+def start(identity_file, database_file, allowed_identities_file):
     global _database_file
+    global _allowed_identity_hashes
 
     RNS.Reticulum()
-    identity=prepare_identity(identity_file)
-    _database_file=database_file
+    identity = prepare_identity(identity_file)
+    _database_file = database_file
+
+    allowed_identity_hashes = load_allowed_identities(
+        allowed_identities_file
+    )
 
     destination=RNS.Destination(
         identity,
@@ -78,7 +108,8 @@ def start(identity_file,database_file):
     destination.register_request_handler(
         REQUEST_NAME,
         response_generator=sql_handler,
-        allow=RNS.Destination.ALLOW_ALL
+        allow=RNS.Destination.ALLOW_LIST,
+        allowed_list=allowed_identity_hashes
     )
 
     print("rSQLite server ready")
@@ -103,6 +134,12 @@ if __name__ == "__main__":
         required=True
     )
 
+    p.add_argument(
+    "-a",
+    "--allowed-identities",
+    required=True
+)
+
     a = p.parse_args()
 
-    start(a.identity, a.database)
+    start(a.identity, a.database, a.allowed_identities)

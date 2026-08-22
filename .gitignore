@@ -9,3 +9,7 @@ __pycache__/
 venv/
 
 .DS_Store
+
+# Reticulum identities
+rsqlite-server-test
+rsqlite-test-client

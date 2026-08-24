@@ -11,13 +11,18 @@ CONFIG_FILE = "rsqlite.conf"
 VERSION = "0.1.0"
 
 
-def choose_server(servers):
+def show_servers(servers):
     print()
-    print("Available servers")
-    print("-----------------")
+    print("Configured servers")
+    print("------------------")
 
     for index, server in enumerate(servers, start=1):
         print(f"{index}) {server['name']}")
+        print(f"   Destination: {server['destination_hash']}")
+
+
+def choose_server(servers):
+    show_servers(servers)
 
     while True:
         try:
@@ -60,10 +65,13 @@ def dispatch_command(line):
     if parts[0] == ".version":
         return "version", None
 
+    if parts[0] == ".db":
+        return "databases_configured", None
+
     return None, None
 
 
-def execute_command(cmd, arg):
+def execute_command(cmd, arg, servers):
 
     if cmd == "help":
         print("""Commands:
@@ -72,9 +80,14 @@ def execute_command(cmd, arg):
   .schema     Show table schema
   .indexes    List indexes
   .databases  List databases
+  .db         List configured servers
   .version    Show rSQL version
   .quit       Exit rSQL
   .exit       Exit rSQL""")
+        return
+
+    elif cmd == "databases_configured":
+        show_servers(servers)
         return
 
     elif cmd == "tables":
@@ -119,7 +132,7 @@ SELECT sqlite_version();
         print(f"Error: {e}")
 
 
-def sql_prompt():
+def sql_prompt(servers):
     lines = []
 
     while True:
@@ -139,7 +152,7 @@ def sql_prompt():
             break
 
         if cmd:
-            execute_command(cmd, arg)
+            execute_command(cmd, arg, servers)
             continue
 
         # Empty line: execute a single-line query.
@@ -211,10 +224,11 @@ def main():
     transport.connect(identity_file, server["destination_hash"])
 
     try:
-        sql_prompt()
+        sql_prompt(servers)
     finally:
         transport.close()
 
 
 if __name__ == "__main__":
     main()
+    

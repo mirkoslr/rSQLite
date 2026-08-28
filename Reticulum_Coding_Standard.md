@@ -108,7 +108,7 @@ La CLI parla con l'utente.
 
 transport.py parla con Reticulum.
 
-server.py parla con SQLite.
+rsqlite-server.py parla con SQLite.
 
 Nessun modulo deve conoscere dettagli degli altri.
 

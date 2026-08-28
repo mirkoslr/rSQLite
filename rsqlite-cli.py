@@ -7,7 +7,7 @@ import config
 import formatter
 import transport
 
-CONFIG_FILE = "rsqlite.conf"
+CONFIG_FILE = "rsqlite-cli.conf"
 VERSION = "0.1.0"
 
 

@@ -56,6 +56,9 @@ def load_server_config(filename):
         "identity": server["identity"],
         "database": server["database"],
         "allowed_identities": server["allowed_identities"],
+
+        # Announce configuration is reserved for a future release.
+        # Announce is not implemented in rSQLite 1.0.
         "announce_enabled": announce.getboolean("enabled"),
         "announce_at_start": announce.getboolean("announce_at_start"),
     }

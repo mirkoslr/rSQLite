@@ -3,9 +3,9 @@
 import argparse
 import readline
 
-import config
-import formatter
-import transport
+from rsqlite import config
+from rsqlite import formatter
+from rsqlite import transport
 
 CONFIG_FILE = "rsqlite-cli.conf"
 VERSION = "0.1.0"

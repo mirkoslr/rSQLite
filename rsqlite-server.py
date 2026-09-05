@@ -13,10 +13,9 @@ import time
 
 import RNS
 
-import config
-
-from identity import prepare_identity
-from constants import APP_NAME, SERVICE_NAME, REQUEST_NAME
+from rsqlite import config
+from rsqlite.identity import prepare_identity
+from rsqlite.constants import APP_NAME, SERVICE_NAME, REQUEST_NAME
 
 _database_file = None
 _allowed_identity_hashes = []

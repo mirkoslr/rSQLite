@@ -1,0 +1,20 @@
+# rSQLite client configuration
+#
+# One or more remote rSQLite servers can be configured.
+# Each server is identified by its Reticulum Destination Hash.
+
+[identity]
+
+# Change according to your configuration
+file = ~/.reticulum/identities/rsqlite
+
+
+# Add servers here
+
+#[server.local]
+#name = NAME_OF_SERVER
+#destination_hash = YOUR_SERVER_DESTINATION_HASH
+
+#[server.remote]
+#name = NAME_OF_REMOTE_SERVER
+#destination_hash = YOUR_REMOTE_SERVER_DESTINATION_HASH

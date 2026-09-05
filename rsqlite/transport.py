@@ -17,8 +17,8 @@ import time
 
 import RNS
 
-from identity import prepare_identity
-from constants import APP_NAME, SERVICE_NAME, REQUEST_NAME
+from .identity import prepare_identity
+from .constants import APP_NAME, SERVICE_NAME, REQUEST_NAME
 
 _debug = False
 

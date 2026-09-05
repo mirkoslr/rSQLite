@@ -1,0 +1,8 @@
+# rSQLite server allowed client Identity Hashes
+#
+# Add one Reticulum Identity Hash per line.
+#
+# Example:
+# 0123456789abcdef0123456789abcdef
+#
+# Add more identities as needed.

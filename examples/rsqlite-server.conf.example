@@ -1,0 +1,23 @@
+# rSQLite server configuration
+#
+# Configure the server identity, database and access control.
+
+[server]
+
+# Change according to your configuration
+identity = ~/.reticulum/identities/rsqlite-server
+
+# SQLite database file
+database = PATH_TO_DATABASE
+
+# File containing allowed client Identity Hashes
+allowed_identities = PATH_TO_ALLOWED_IDENTITIES
+
+
+[announce]
+
+# Announce/Discovery is optional and reserved for a future release.
+enabled = no
+
+# Announce at server startup
+announce_at_start = yes

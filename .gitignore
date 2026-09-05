@@ -1,15 +1,43 @@
+# Python
+
 __pycache__/
 *.pyc
 
-*.db
 
-.env
+# Virtual environments
 
 .venv/
 venv/
 
-.DS_Store
+
+# Environment files
+
+.env
+
+
+# Local databases
+
+*.db
+
 
 # Reticulum identities
+
 rsqlite-server-test
 rsqlite-test-client
+
+
+# Local test configuration
+
+rsqlite-acl.conf
+rsqlite-unauthorized.conf
+
+
+# Local project notes
+
+rSQLite_Roadmap_Migliorie.docx
+rSQLite_Roadmap_Migliorie.pages
+
+
+# macOS
+
+.DS_Store

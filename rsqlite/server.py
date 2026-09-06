@@ -153,13 +153,13 @@ def start(server_config):
         time.sleep(1)
 
 
-if __name__ == "__main__":
+def main():
     p = argparse.ArgumentParser()
 
     p.add_argument(
         "-c",
         "--config",
-        default="rsqlite-server.conf",
+        default="/etc/rsqlite/rsqlite-server.conf",
         help="Server configuration file"
     )
 
@@ -168,3 +168,8 @@ if __name__ == "__main__":
     server_config = config.load_server_config(a.config)
 
     start(server_config)
+
+
+if __name__ == "__main__":
+    main()
+    

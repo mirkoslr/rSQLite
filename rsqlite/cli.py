@@ -7,7 +7,9 @@ from rsqlite import config
 from rsqlite import formatter
 from rsqlite import transport
 
-CONFIG_FILE = "rsqlite-cli.conf"
+from pathlib import Path
+
+CONFIG_FILE = Path.home() / ".config" / "rsqlite" / "rsqlite-cli.conf"
 VERSION = "0.1.0"
 
 

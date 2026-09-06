@@ -41,3 +41,6 @@ rSQLite_Roadmap_Migliorie.pages
 # macOS
 
 .DS_Store
+
+*.egg-info/
+dist/

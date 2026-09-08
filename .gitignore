@@ -44,3 +44,4 @@ rSQLite_Roadmap_Migliorie.pages
 
 *.egg-info/
 dist/
+rsqlite-server.conf

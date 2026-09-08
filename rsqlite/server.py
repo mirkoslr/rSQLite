@@ -25,13 +25,28 @@ def load_allowed_identities(path):
     allowed = []
 
     with open(path, "r") as f:
-        for line in f:
+        for line_number, line in enumerate(f, start=1):
             line = line.strip()
 
-            if not line:
+            if not line or line.startswith("#"):
                 continue
 
-            allowed.append(bytes.fromhex(line))
+            try:
+                identity_hash = bytes.fromhex(line)
+            except ValueError:
+                raise ValueError(
+                    f"Invalid Identity Hash in {path} at line {line_number}: {line}"
+                )
+
+            expected_length = RNS.Identity.TRUNCATED_HASHLENGTH // 8
+
+            if len(identity_hash) != expected_length:
+                raise ValueError(
+                    f"Invalid Identity Hash length in {path} "
+                    f"at line {line_number}: {line}"
+                )
+
+            allowed.append(identity_hash)
 
     return allowed
 

@@ -430,4 +430,19 @@ To run it:
 sudo ./install.debian.sh
 ```
 
+### Reboot after installation
+
+After completing the installation, a system reboot is recommended before
+using rSQLite for the first time.
+
+The installer configures Reticulum and rSQLite as system services.
+Rebooting ensures that the new service environment is fully initialized
+before the first client/server test.
+
+After reboot:
+
+```bash
+rsqlite
+```
+
 For other Linux distributions, install the required system packages using the distribution's package manager and follow this manual procedure.

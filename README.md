@@ -118,6 +118,9 @@ sudo ./install.debian.sh
 
 The installer creates the required Python environment, configuration, server identity, access-control file, and systemd service.
 
+> **First-time setup:** A reboot is recommended after installation
+> before using rSQLite for the first time.
+
 ### Manual installation
 
 For a manual installation, see:

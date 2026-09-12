@@ -599,6 +599,11 @@ show_final_report() {
         echo "============================================================"
         echo "Installation completed successfully."
         echo
+        echo "A reboot is recommended before first use."
+        echo
+        echo "After reboot:"
+        echo "  rsqlite"
+        echo
         echo "Installation report saved to:"
         echo "$REPORT_FILE"
         echo "============================================================"

@@ -4,7 +4,7 @@
 
 rSQLite is a lightweight client/server application that provides access to a SQLite database over the [Reticulum Network Stack](https://reticulum.network/).
 
-It combines the simplicity of SQLite with Reticulum's Identity, Destination, Link, and Request/Response mechanisms to provide a small database service that does not require exposing a conventional SQLite database service over TCP/IP.
+It combines the simplicity of SQLite with Reticulum's Identity, Destination, Link, and Request/Response mechanisms to provide a small database service.
 
 > **Project status:** rSQLite is currently under active development. The current release is `0.1.0`.
 
@@ -30,8 +30,6 @@ rSQLite brings the two together:
              │                   ▼
              └──────────────► SQLite
 ```
-
-The goal is to explore a small application service built directly on top of Reticulum.
 
 ---
 
@@ -223,6 +221,10 @@ allowed_identities = /etc/rsqlite/allowed_identities
 enabled = no
 announce_at_start = yes
 ```
+
+rSQLite does not currently implement Reticulum Announce.
+
+The `[announce]` section is reserved for future releases. The current `0.1.0` release does not use these settings.
 
 ---
 

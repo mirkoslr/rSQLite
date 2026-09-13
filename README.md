@@ -14,76 +14,9 @@ It combines the simplicity of SQLite with Reticulum's Identity, Destination, Lin
 
 SQLite is deliberately simple: a database can be a single file.
 
-Reticulum provides a different way to connect applications: identities, destinations, links, and cryptographically authenticated communication.
+Reticulum provides a resilient application networking layer based on identities, destinations, links, and authenticated communication.
 
-rSQLite brings the two together:
-
-```text
-                Reticulum Network
-                       │
-                       │
-             ┌─────────┴─────────┐
-             │                   │
-        rSQLite Client      rSQLite Server
-             │                   │
-        SQL requests             │
-             │                   ▼
-             └──────────────► SQLite
-```
-
----
-
-## How It Works
-
-A typical request follows this path:
-
-```mermaid
-flowchart LR
-    C[rSQLite CLI] --> I[Client Identity]
-    I --> D[Server Destination]
-    D --> L[Reticulum Link]
-    L --> R[Request / Response]
-    R --> S[rSQLite Server]
-    S --> DB[(SQLite)]
-    DB --> S
-    S --> R
-    R --> C
-```
-
-The server exposes an rSQLite Destination identified by its Reticulum Destination Hash.
-
-The client connects to that Destination, establishes a Reticulum Link, and sends SQL through the Request/Response interface.
-
-On the server, the SQL request is executed against the configured SQLite database and the result is returned to the client.
-
----
-
-## Authentication and Access Control
-
-rSQLite uses Reticulum Identity authentication together with an explicit server allow-list.
-
-```mermaid
-flowchart TD
-    A[Client Identity] --> B[Reticulum Authentication]
-    B --> C{Identity allowed?}
-    C -->|Yes| D[Request Handler]
-    C -->|No| E[Connection rejected]
-    D --> F[SQLite]
-```
-
-The server maintains an allow-list containing the Identity Hashes of authorized clients.
-
-```text
-Client Identity Hash
-        │
-        ▼
-/etc/rsqlite/allowed_identities
-        │
-        ▼
-rSQLite Server
-```
-
-The allow-list contains **Identity Hashes**, not Destination Hashes.
+rSQLite combines these two technologies to provide SQLite database access through Reticulum.
 
 ---
 
@@ -116,8 +49,7 @@ sudo ./install.debian.sh
 
 The installer creates the required Python environment, configuration, server identity, access-control file, and systemd service.
 
-> **First-time setup:** A reboot is recommended after installation
-> before using rSQLite for the first time.
+> **First-time setup:** A reboot is recommended after installation before using rSQLite for the first time.
 
 ### Manual installation
 
@@ -137,13 +69,7 @@ After installation, start the client:
 rsqlite
 ```
 
-Select a configured server and enter SQL at the:
-
-```text
-rSQL>
-```
-
-prompt.
+Select a configured server and enter SQL at the `rSQL>` prompt.
 
 For example:
 
@@ -151,29 +77,34 @@ For example:
 SELECT sqlite_version();
 ```
 
-or:
-
-```sql
-CREATE TABLE users (
-    id INTEGER PRIMARY KEY,
-    name TEXT
-);
-```
-
-Then:
-
-```sql
-INSERT INTO users (name) VALUES ('Bob');
-SELECT * FROM users;
-```
-
 The SQLite database is created automatically when the server receives its first SQL request.
+
+---
+
+## Download
+
+The source code is available from the GitHub repository.
+
+### Clone with Git
+
+```bash
+git clone https://github.com/mirkoslr/rSQLite.git
+cd rSQLite
+```
+
+### Download ZIP
+
+Download the current source tree from the `main` branch without installing Git:
+
+**[Download rSQLite as ZIP](https://github.com/mirkoslr/rSQLite/archive/refs/heads/main.zip)**
+
+For stable, versioned downloads, see the GitHub **Releases** section when releases are published.
 
 ---
 
 ## Configuration
 
-The client and server have separate configuration files.
+The client and server use separate configuration files.
 
 ### Client
 
@@ -228,134 +159,13 @@ The `[announce]` section is reserved for future releases. The current `0.1.0` re
 
 ---
 
-## Architecture
+## Authentication and Access Control
 
-The project is intentionally small.
+rSQLite uses Reticulum Identity authentication together with an explicit server allow-list.
 
-```text
-rSQLite
-│
-├── Client
-│   ├── CLI
-│   ├── Configuration
-│   ├── Identity
-│   └── Transport
-│
-├── Reticulum
-│   ├── Identity
-│   ├── Destination
-│   ├── Link
-│   └── Request / Response
-│
-└── Server
-    ├── Configuration
-    ├── Access Control
-    ├── SQL Handler
-    └── SQLite
-```
+The server maintains an allow-list containing the Identity Hashes of authorized clients.
 
-At runtime, the important flow is:
-
-```text
-SQL
- │
- ▼
-rSQLite CLI
- │
- ▼
-Reticulum Identity
- │
- ▼
-Destination
- │
- ▼
-Link
- │
- ▼
-Request / Response
- │
- ▼
-rSQLite Server
- │
- ▼
-SQLite
- │
- ▼
-Response
- │
- ▼
-rSQLite CLI
-```
-
----
-
-## Project Layout
-
-```text
-rSQLite/
-├── rsqlite/
-│   ├── __init__.py
-│   ├── cli.py
-│   ├── config.py
-│   ├── constants.py
-│   ├── formatter.py
-│   ├── identity.py
-│   ├── server.py
-│   └── transport.py
-│
-├── examples/
-│   ├── rsqlite-cli.conf.example
-│   ├── rsqlite-server.conf.example
-│   └── allowed_identities.example
-│
-├── docs/
-├── tests/
-│
-├── INSTALL.md
-├── install.debian.sh
-├── pyproject.toml
-└── README.md
-```
-
----
-
-## Reticulum
-
-rSQLite uses the [Reticulum Network Stack](https://reticulum.network/) as its communication layer.
-
-Reticulum provides the networking primitives used by rSQLite:
-
-- Identity
-- Destination
-- cryptographic authentication
-- Links
-- routing
-- Request/Response communication
-
----
-
-## Design Principles
-
-rSQLite follows a few simple principles:
-
-### Keep the database simple
-
-SQLite remains SQLite.
-
-
-### Keep the network layer separate
-
-Reticulum handles networking and cryptographic identity.
-
-rSQLite handles the application protocol and SQL execution.
-
-### Authenticate identities, not passwords
-
-Access control is based on Reticulum Identity Hashes and an explicit allow-list.
-
-### Keep the service small
-
-The project is intentionally lightweight.
+The allow-list contains **Identity Hashes**, not Destination Hashes.
 
 ---
 
@@ -373,37 +183,7 @@ The current `0.1.0` release includes:
 - systemd server integration
 - manual installation documentation
 
-The complete client → Reticulum → server → SQLite → response path has been tested on Debian.
-
----
-
-## Roadmap
-
-- [x] Client
-- [x] Server
-- [x] Reticulum transport
-- [x] Identity authentication
-- [x] Access control
-- [x] SQLite execution
-- [x] Debian installer
-- [x] Manual installation documentation
-- [ ] Test suite
-- [ ] Expanded documentation
-- [ ] API documentation
-- [ ] Public package release
-- [ ] `1.0.0`
-
----
-
-## Documentation
-
-| Document | Purpose |
-|---|---|
-| [README.md](README.md) | Project overview and quick start |
-| [INSTALL.md](INSTALL.md) | Manual installation |
-| `install.debian.sh` | Automated Debian installation |
-| `examples/` | Configuration examples |
-| `docs/` | Extended documentation |
+The complete client, Reticulum, server, and SQLite request/response path has been tested on Debian.
 
 ---
 
@@ -420,5 +200,3 @@ The rSQLite project itself is distributed under the MIT License. Dependencies, i
 rSQLite is an experimental open-source project.
 
 Issues, ideas, testing, documentation improvements, and code contributions are welcome.
-
-Before opening a large change, please consider discussing the design in an issue so that the project can remain small and coherent.

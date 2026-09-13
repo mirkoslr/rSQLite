@@ -3,6 +3,13 @@
 __pycache__/
 *.pyc
 
+# Local test configuration
+
+rsqlite-acl.conf
+rsqlite-cli.conf
+rsqlite-unauthorized.conf
+allowed_identities
+
 # Internal project documentation
 
 docs/

@@ -3,6 +3,9 @@
 __pycache__/
 *.pyc
 
+# Internal project documentation
+
+docs/
 
 # Virtual environments
 

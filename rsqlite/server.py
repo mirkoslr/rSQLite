@@ -10,6 +10,7 @@ import argparse
 import json
 import sqlite3
 import time
+from pathlib import Path
 
 import RNS
 
@@ -17,12 +18,15 @@ from rsqlite import config
 from rsqlite.identity import prepare_identity
 from rsqlite.constants import APP_NAME, SERVICE_NAME, REQUEST_NAME
 
+
 _database_file = None
 _allowed_identity_hashes = []
 
 
 def load_allowed_identities(path):
     allowed = []
+
+    path = Path(path).expanduser()
 
     with open(path, "r") as f:
         for line_number, line in enumerate(f, start=1):
@@ -120,19 +124,25 @@ def client_connected(link):
     link.set_remote_identified_callback(remote_identified)
 
 
-def start(server_config):
+def start(server_config, rns_configdir=None):
     global _database_file
     global _allowed_identity_hashes
 
     identity_file = server_config["identity"]
-    database_file = server_config["database"]
-    allowed_identities_file = server_config["allowed_identities"]
 
-    RNS.Reticulum()
+    database_file = Path(
+        server_config["database"]
+    ).expanduser()
+
+    allowed_identities_file = Path(
+        server_config["allowed_identities"]
+    ).expanduser()
+
+    RNS.Reticulum(configdir=rns_configdir)
 
     identity = prepare_identity(identity_file)
 
-    _database_file = database_file
+    _database_file = str(database_file)
 
     _allowed_identity_hashes = load_allowed_identities(
         allowed_identities_file
@@ -174,15 +184,24 @@ def main():
     p.add_argument(
         "-c",
         "--config",
-        default="/etc/rsqlite/rsqlite-server.conf",
+        default=Path.home() / ".config" / "rsqlite" / "rsqlite-server.conf",
         help="Server configuration file"
+    )
+
+    p.add_argument(
+        "--rns-config",
+        default=None,
+        help="Reticulum configuration directory"
     )
 
     a = p.parse_args()
 
     server_config = config.load_server_config(a.config)
 
-    start(server_config)
+    start(
+        server_config,
+        rns_configdir=a.rns_config
+    )
 
 
 if __name__ == "__main__":

@@ -184,7 +184,7 @@ def main():
     p.add_argument(
         "-c",
         "--config",
-        default=Path.home() / ".config" / "rsqlite" / "rsqlite-server.conf",
+        default=Path.home() / ".rsqlite" / "config" / "rsqlite-server.conf",
         help="Server configuration file"
     )
 

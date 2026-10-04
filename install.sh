@@ -9,7 +9,7 @@ set -e
 
 CLIENT_HOME="$HOME"
 
-CONFIG_DIR="$CLIENT_HOME/.config/rsqlite"
+CONFIG_DIR="$CLIENT_HOME/.rsqlite/config"
 DATA_DIR="$CLIENT_HOME/.rsqlite"
 
 CLIENT_CONFIG="$CONFIG_DIR/rsqlite-cli.conf"
@@ -164,7 +164,7 @@ prompt_value() {
 # ==========================================
 
 set_default_paths() {
-    CONFIG_DIR="$CLIENT_HOME/.config/rsqlite"
+    CONFIG_DIR="$CLIENT_HOME/.rsqlite/config"
     DATA_DIR="$CLIENT_HOME/.rsqlite"
 
     CLIENT_CONFIG="$CONFIG_DIR/rsqlite-cli.conf"

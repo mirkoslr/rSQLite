@@ -6,12 +6,15 @@ import readline
 from rsqlite import config
 from rsqlite import formatter
 from rsqlite import transport
+from rsqlite import shell
 
 from pathlib import Path
 
-CONFIG_FILE = Path.home() / ".config" / "rsqlite" / "rsqlite-cli.conf"
-VERSION = "0.1.0"
+dispatch_command = shell.dispatch_command
+execute_command = shell.execute_command
 
+CONFIG_FILE = Path.home() / ".rsqlite" / "config" / "rsqlite-cli.conf"
+VERSION = "0.1.0"
 
 def show_servers(servers):
     print()
@@ -21,7 +24,6 @@ def show_servers(servers):
     for index, server in enumerate(servers, start=1):
         print(f"{index}) {server['name']}")
         print(f"   Destination: {server['destination_hash']}")
-
 
 def choose_server(servers):
     show_servers(servers)
@@ -37,102 +39,6 @@ def choose_server(servers):
             pass
 
         print("Invalid selection.")
-
-
-def dispatch_command(line):
-    parts = line.split()
-
-    if not parts:
-        return None, None
-
-    if parts[0] in (".quit", ".exit"):
-        return "quit", None
-
-    if parts[0] == ".help":
-        return "help", None
-
-    if parts[0] == ".tables":
-        return "tables", None
-
-    if parts[0] == ".schema":
-        arg = parts[1] if len(parts) > 1 else None
-        return "schema", arg
-
-    if parts[0] == ".indexes":
-        return "indexes", None
-
-    if parts[0] == ".databases":
-        return "databases", None
-
-    if parts[0] == ".version":
-        return "version", None
-
-    if parts[0] == ".db":
-        return "databases_configured", None
-
-    return None, None
-
-
-def execute_command(cmd, arg, servers):
-
-    if cmd == "help":
-        print("""Commands:
-  .help       Show this help
-  .tables     List tables
-  .schema     Show table schema
-  .indexes    List indexes
-  .databases  List databases
-  .db         List configured servers
-  .version    Show rSQL version
-  .quit       Exit rSQL
-  .exit       Exit rSQL""")
-        return
-
-    elif cmd == "databases_configured":
-        show_servers(servers)
-        return
-
-    elif cmd == "tables":
-        query = """
-SELECT name
-FROM sqlite_master
-WHERE type = 'table'
-ORDER BY name;
-"""
-
-    elif cmd == "schema":
-        query = """
-SELECT name, sql
-FROM sqlite_master
-WHERE type = 'table'
-ORDER BY name;
-"""
-
-    elif cmd == "indexes":
-        query = """
-SELECT name
-FROM sqlite_master
-WHERE type = 'index'
-ORDER BY name;
-"""
-
-    elif cmd == "databases":
-        query = """
-PRAGMA database_list;
-"""
-
-    elif cmd == "version":
-        print(f"rSQLite version {VERSION}")
-        query = """
-SELECT sqlite_version();
-"""
-
-    try:
-        response = transport.execute(query)
-        print(formatter.render(response))
-    except RuntimeError as e:
-        print(f"Error: {e}")
-
 
 def sql_prompt(servers):
     lines = []
@@ -154,7 +60,12 @@ def sql_prompt(servers):
             break
 
         if cmd:
-            execute_command(cmd, arg, servers)
+            result = execute_command(cmd, arg, servers)
+            if result is not None:
+                if isinstance(result, str):
+                    print(result)
+                else:
+                    print(formatter.render(result))
             continue
 
         # Empty line: execute a single-line query.
@@ -229,7 +140,6 @@ def main():
         sql_prompt(servers)
     finally:
         transport.close()
-
 
 if __name__ == "__main__":
     main()

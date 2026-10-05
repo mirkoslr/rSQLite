@@ -61,7 +61,7 @@ rsqlite-server
 The server uses:
 
 ```text
-~/.config/rsqlite/rsqlite-server.conf
+~/.rsqlite/config/rsqlite-server.conf
 ```
 
 as its default configuration file.
@@ -83,7 +83,7 @@ rsqlite
 The client uses:
 
 ```text
-~/.config/rsqlite/rsqlite-cli.conf
+~/.rsqlite/config/rsqlite-cli.conf
 ```
 
 for its configuration.

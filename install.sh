@@ -190,7 +190,7 @@ choose_custom_paths() {
     if [ "$ROLE" = "client" ] || [ "$ROLE" = "both" ]; then
         CONFIG_DIR=$(prompt_value \
             "Configuration directory" \
-            "$CLIENT_HOME/.config/rsqlite")
+            "$CLIENT_HOME/.rsqlite/config")
     fi
 
     if [ "$ROLE" = "server" ] || [ "$ROLE" = "both" ]; then

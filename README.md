@@ -97,7 +97,7 @@ The server is a normal application process.
 For a Linux installation performed with `install.sh`:
 
 ```bash
-rsqlite-server -c ~/.config/rsqlite/rsqlite-server.conf
+rsqlite-server -c ~/.rsqlite/config/rsqlite-server.conf
 ```
 
 The server prints its Reticulum Destination Hash when it starts:
@@ -145,7 +145,7 @@ The client and server use separate configuration files.
 The default client configuration is:
 
 ```text
-~/.config/rsqlite/rsqlite-cli.conf
+~/.rsqlite/config/rsqlite-cli.conf
 ```
 
 A client can contain one or more configured rSQLite servers:
@@ -169,7 +169,7 @@ The client Identity is used to identify the application when establishing the Re
 When installed with the Linux `install.sh` installer, the default server configuration is:
 
 ```text
-~/.config/rsqlite/rsqlite-server.conf
+~/.rsqlite/config/rsqlite-server.conf
 ```
 
 For manual installations, the server configuration file can be stored anywhere and passed explicitly with `-c` / `--config`.
@@ -190,7 +190,7 @@ identity = /home/USER/.rsqlite/identities/rsqlite-server
 
 database = /home/USER/.rsqlite/rsqlite.db
 
-allowed_identities = /home/USER/.config/rsqlite/allowed_identities
+allowed_identities = /home/USER/.rsqlite/config/allowed_identities
 
 [announce]
 
@@ -213,7 +213,7 @@ The server can optionally use a specific Reticulum configuration directory:
 
 ```bash
 rsqlite-server \
-   -c ~/.config/rsqlite/rsqlite-server.conf \
+   -c ~/.rsqlite/config/rsqlite-server.conf \
    --rns-config /path/to/reticulum
 ```
 

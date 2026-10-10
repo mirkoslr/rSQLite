@@ -124,6 +124,27 @@ def client_connected(link):
     link.set_remote_identified_callback(remote_identified)
 
 
+def print_identity(server_config, rns_configdir=None):
+    RNS.Reticulum(configdir=rns_configdir)
+
+    identity_file = server_config["identity"]
+    identity = prepare_identity(identity_file)
+
+    destination = RNS.Destination(
+        identity,
+        RNS.Destination.IN,
+        RNS.Destination.SINGLE,
+        APP_NAME,
+        SERVICE_NAME,
+    )
+
+    print("rSQLite Server Identity")
+    print("-----------------------")
+    print(f"Identity file    : {identity_file}")
+    print(f"Identity hash    : {RNS.prettyhexrep(identity.hash)}")
+    print(f"Destination hash : {RNS.prettyhexrep(destination.hash)}")
+
+
 def start(server_config, rns_configdir=None):
     global _database_file
     global _allowed_identity_hashes
@@ -194,10 +215,23 @@ def main():
         help="Reticulum configuration directory"
     )
 
+    p.add_argument(
+        "--print-identity",
+        action="store_true",
+        help="Print server identity and destination information, then exit",
+    )
+
     a = p.parse_args()
 
     server_config = config.load_server_config(a.config)
 
+    if a.print_identity:
+        print_identity(
+            server_config,
+            rns_configdir=a.rns_config,
+        )
+        return
+    
     start(
         server_config,
         rns_configdir=a.rns_config

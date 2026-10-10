@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import RNS
 import argparse
 import readline
 
@@ -7,6 +8,7 @@ from rsqlite import config
 from rsqlite import formatter
 from rsqlite import transport
 from rsqlite import shell
+from rsqlite.identity import prepare_identity
 
 from pathlib import Path
 
@@ -98,7 +100,6 @@ def sql_prompt(servers):
             except Exception as e:
                 print(f"Error: {e}")
 
-
 def main():
     parser = argparse.ArgumentParser(description="rSQLite client")
 
@@ -115,12 +116,26 @@ def main():
         help="Enable Reticulum debug logging"
     )
 
+    parser.add_argument(
+        "--print-identity",
+        action="store_true",
+        help="Print client identity information and exit",
+    )
+
     args = parser.parse_args()
 
     # Quiet by default, verbose only when debugging.
     transport.set_debug(args.debug)
 
     identity_file, servers = config.load_config(args.config)
+
+    if args.print_identity:
+        identity = prepare_identity(identity_file)
+        print("rSQLite Identity")
+        print("----------------")
+        print(f"Identity file : {identity_file}")
+        print(f"Identity hash : {RNS.prettyhexrep(identity.hash)}")
+        return
 
     print()
     print("rSQLite")

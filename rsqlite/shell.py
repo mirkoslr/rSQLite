@@ -1,11 +1,19 @@
-#!/usr/bin/env python3
+"""
+rSQLite SQL shell.
+
+Responsibilities:
+- Map shell commands to SQL queries
+- Execute SQL commands
+- Normalize query responses
+"""
+
 import json
 
 from rsqlite import formatter
 from rsqlite import transport
 
-
 def dispatch_command(line):
+    """Identify a client command and extract its argument, if any."""
     parts = line.split()
 
     if not parts:
@@ -40,7 +48,7 @@ def dispatch_command(line):
 
 
 def get_command_query(cmd, arg=None):
-
+    """Return the SQL query associated with a client command."""
     if cmd == "tables":
         return """
 SELECT name
@@ -77,7 +85,9 @@ SELECT sqlite_version();
 
     return None
 
+
 def execute_sql(query):
+    """Execute a SQL query and decode the server response if needed."""
     response = transport.execute(query)
 
     if isinstance(response, str):
@@ -85,12 +95,14 @@ def execute_sql(query):
 
     return response
 
+
 def render_response(response):
+    """Format a server response for display."""
     return formatter.render(response)
 
 
 def execute_command(cmd, arg=None, servers=None):
-
+    """Handle client commands and execute their SQL queries."""
     if cmd == "help":
         return """Commands:
   .help       Show this help
@@ -126,6 +138,8 @@ def execute_command(cmd, arg=None, servers=None):
 
     query = get_command_query(cmd, arg)
 
+    # Ensure a query exists before execution, especially if commands
+    # are later accepted from external sources.
     if query is None:
         return None
 
@@ -133,5 +147,6 @@ def execute_command(cmd, arg=None, servers=None):
 
 
 def execute_and_render(query):
+    """Execute a SQL query and format the response for display."""
     response = execute_sql(query)
     return render_response(response)

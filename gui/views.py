@@ -362,37 +362,20 @@ def print_browse_rows(
         print()
 
 def print_server_selection(servers):
-
+    """Display the servers from the client configuration."""
     print()
-
     print("`F58aSelect Server`f")
-
     print("`F58a_____________`f")
 
     print()
-
     print("Configured servers")
-
     print()
 
     for index, server in enumerate(servers):
-
         name = server["name"]
-
         destination = server["destination_hash"]
-
-        print(link(
-
-            f"→ {name}",
-
-            "/page/rsqlite-gui.py",
-
-            [("server", index)],
-
-            color="FEA4",
-
-        ))
-
+        print(link(f"→ {name}", "/page/rsqlite-gui.py",
+            [("server", index)],color="FEA4",))
+        
         print(f"  Destination: {destination}")
-
         print()

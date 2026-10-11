@@ -15,6 +15,7 @@ def execute_sql(query):
 
 
 def get_tables():
+    """Return the names of the tables in the remote database."""
     response = execute_sql("""
         SELECT name
         FROM sqlite_master
@@ -23,14 +24,9 @@ def get_tables():
     """)
 
     if not response.get("ok"):
-        raise RuntimeError(
-            response.get("error", "Database error")
-        )
-
-    return [
-        row[0]
-        for row in response.get("rows", [])
-    ]
+        raise RuntimeError(response.get("error", "Database error"))
+    
+    return [row[0] for row in response.get("rows", [])]
 
 
 def count_records(table_name):

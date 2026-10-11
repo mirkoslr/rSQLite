@@ -1,4 +1,14 @@
+"""
+Micron link utilities.
+
+Responsibilities:
+- Build formatted Micron links
+- Encode link parameters
+- Apply optional link colors
+"""
+
 def link(label, target, params=None, color=None):
+    """Build a Micron link with optional parameters and color."""
     parts = []
 
     if params:
@@ -13,11 +23,10 @@ def link(label, target, params=None, color=None):
 
     if arguments:
         target = f"{target}`{arguments}"
-
     result = f"`[{label}`:{target}]`"
 
     if color:
         result = f"`{color}{result}`"
-
+        
     return result
 

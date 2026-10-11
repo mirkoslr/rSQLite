@@ -8,8 +8,9 @@
 # Change according to your configuration
 file = ~/.reticulum/identities/rsqlite
 
-
-# Add servers here
+# Add servers below. Each server must have its own section,
+# and each section name must start with "server.".
+# Example: [server.local], [server.remote]
 
 #[server.local]
 #name = NAME_OF_SERVER

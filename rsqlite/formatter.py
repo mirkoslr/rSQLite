@@ -1,7 +1,15 @@
+"""
+rSQLite result formatter.
+
+Responsibilities:
+- Format SQL query results as readable terminal tables
+- Display query status and execution information
+"""
 import json
 
-
 def format_value(value, width=None):
+    """Convert a value to text and optionally align it 
+    to a given width."""
     if value is None:
         text = "NULL"
     else:
@@ -17,36 +25,31 @@ def format_value(value, width=None):
 
 
 def render(response):
-
-    # The transport layer normally returns a str.
-    # Keep support for bytes in case a raw Reticulum response is passed here.
-
-    if isinstance(response, str):
-        response = json.loads(response)
+    """Render a SQL query response as a formatted table 
+    or status message."""
+    
+    response = json.loads(response)
 
     if not response.get("ok", False):
         return "SQL error: " + response.get("error", "Unknown error")
 
-    # Extract columns, rows, and execution time from the query response.
+   
     cols = response.get("columns", [])
     rows = response.get("rows", [])
     execution_time_ms = response.get("execution_time", 0) * 1000
 
-    # If there are no columns, the query did not return a result set.
     if not cols:
         return f"OK ({response.get('rows_affected', 0)} rows affected)"
 
-    # Start each column width with the length of its column name.
     column_widths = [len(str(c)) for c in cols]
 
-    # Expand each column width to fit the longest value in that column.
     for r in rows:
         for i, v in enumerate(r):
             column_widths[i] = max(
                 column_widths[i],
                 len(format_value(v))
             )
-
+            
     out = []
 
     out.append(
@@ -70,8 +73,8 @@ def render(response):
 
     out.append("")
     out.append(
-       f"{len(rows)} row{'s' if len(rows) != 1 else ''} returned "
-       f"({execution_time_ms:.2f} ms)"
+        f"{len(rows)} row{'s' if len(rows) != 1 else ''} returned "
+        f"({execution_time_ms:.2f} ms)"
     )
 
     return "\n".join(out)

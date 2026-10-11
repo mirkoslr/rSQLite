@@ -1,9 +1,21 @@
+"""
+rSQLite configuration module.
+
+Responsibilities:
+- Load and validate the client configuration
+- Load and validate the server configuration
+- Read the application Identity and server settings
+- Return configuration data to the client and server
+"""
+
 import configparser
 import pathlib
 import sys
 
-
 def load_config(filename):
+    """Load the client configuration and return the identity file path
+    and the list of configured servers.
+    """
     config = configparser.ConfigParser()
 
     if not pathlib.Path(filename).exists():
@@ -33,6 +45,7 @@ def load_config(filename):
 
 
 def load_server_config(filename):
+    """Load and validate the server configuration file."""
     config = configparser.ConfigParser()
 
     if not pathlib.Path(filename).exists():
@@ -56,11 +69,4 @@ def load_server_config(filename):
         "identity": server["identity"],
         "database": server["database"],
         "allowed_identities": server["allowed_identities"],
-
-        # Announce configuration is reserved for a future release.
-        # Announce is not implemented in rSQLite 1.0.
-        "announce_enabled": announce.getboolean("enabled"),
-        "announce_at_start": announce.getboolean("announce_at_start"),
     }
-
-

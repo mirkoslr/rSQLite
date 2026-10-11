@@ -282,6 +282,7 @@ def handle_browse(table_name, page, server_index):
         ))
 
 def handle_tables(tables, server_index):
+    """Display database tables and provide a link to the SQL shell."""
     print("`F58aTables`f")
     print("`F58a______`f")
     print()

@@ -1,16 +1,31 @@
 #!/usr/bin/env python3
+"""
+rSQLite command-line interface.
+
+Responsibilities:
+- Parse command-line arguments
+- Configure and connect to the selected server
+- Execute SQL commands and interactive queries
+- Display query results
+- Export query results to files
+- Close the transport connection
+"""
 
 import RNS
 import argparse
 import readline
+import json 
+
+from pathlib import Path
+from datetime import date
 
 from rsqlite import config
 from rsqlite import formatter
+from rsqlite import exporter
 from rsqlite import transport
 from rsqlite import shell
 from rsqlite.identity import prepare_identity
 
-from pathlib import Path
 
 dispatch_command = shell.dispatch_command
 execute_command = shell.execute_command
@@ -19,6 +34,7 @@ CONFIG_FILE = Path.home() / ".rsqlite" / "config" / "rsqlite-cli.conf"
 VERSION = "0.1.0"
 
 def show_servers(servers):
+    """Display the configured servers and their destination hashes."""
     print()
     print("Configured servers")
     print("------------------")
@@ -27,7 +43,9 @@ def show_servers(servers):
         print(f"{index}) {server['name']}")
         print(f"   Destination: {server['destination_hash']}")
 
+
 def choose_server(servers):
+    """Let the user select a configured server and return it."""
     show_servers(servers)
 
     while True:
@@ -42,7 +60,9 @@ def choose_server(servers):
 
         print("Invalid selection.")
 
+
 def sql_prompt(servers):
+    """Run the interactive SQL prompt and execute queries."""
     lines = []
 
     while True:
@@ -100,7 +120,11 @@ def sql_prompt(servers):
             except Exception as e:
                 print(f"Error: {e}")
 
+
 def main():
+    """Parse command-line arguments and run the rSQLite client.
+    Handle identity display, database export and interactive SQL mode.
+    """
     parser = argparse.ArgumentParser(description="rSQLite client")
 
     parser.add_argument(
@@ -120,6 +144,25 @@ def main():
         "--print-identity",
         action="store_true",
         help="Print client identity information and exit",
+    )
+
+    parser.add_argument(
+        "-e", "--export",
+        metavar="TABLE",
+        help="Export a database table"
+    )
+
+    parser.add_argument(
+        "-f", "--format",
+        choices=["csv", "json", "txt"],
+        default="csv",
+        help="Export format (default: csv)"
+    )
+
+    parser.add_argument(
+        "-o", "--output",
+        metavar="FILE",
+        help="Output file path"
     )
 
     args = parser.parse_args()
@@ -149,10 +192,36 @@ def main():
     print(f"Destination hash   : {server['destination_hash']}")
     print()
 
-    transport.connect(identity_file, server["destination_hash"])
-
     try:
+        transport.connect(identity_file, server["destination_hash"])
+        
+        if args.export:
+            query = f'SELECT * FROM "{args.export.replace(chr(34), chr(34) * 2)}"'
+            response = transport.execute(query)
+
+            result = json.loads(response) if isinstance(response, str) else response
+
+            if not result.get("ok", False):
+                print(formatter.render(result))
+                return
+
+            output_file = args.output or (
+                f"{args.export}.{date.today().strftime('%d.%m.%y')}.{args.format}"
+            )
+
+            exporters = {
+                "csv": exporter.export_csv,
+                "json": exporter.export_json,
+                "txt": exporter.export_txt,
+            }
+
+            exporters[args.format](result, output_file)
+            print(f"Export completed: {output_file}")
+            return
+
         sql_prompt(servers)
+    except Exception as e:
+        print(f"Error: {e}")
     finally:
         transport.close()
 

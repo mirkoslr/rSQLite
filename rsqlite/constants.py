@@ -21,3 +21,13 @@ SERVER_CONFIG_NAME = "rsqlite-server.conf"
 ALLOWED_IDENTITIES_NAME = "allowed_identities"
 DATABASE_NAME = "local.db"
 
+GUI_DIR_NAME = "gui"
+GUI_SCRIPT_NAME = "rsqlite-gui.py"
+GUI_MODULE_FILES = (
+    "database.py",
+    "handlers.py",
+    "links.py",
+    "views.py",
+)
+
+

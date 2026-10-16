@@ -29,11 +29,17 @@ Reticulum is installed automatically as a dependency of rSQLite.
 
 ### Install with pipx
 
-Clone the repository and install rSQLite:
+You can obtain the source code by cloning the repository:
 
 ```bash
 git clone https://github.com/mirkoslr/rSQLite.git
 cd rSQLite
+pipx install .
+```
+
+Alternatively, download the [ZIP archive](https://github.com/mirkoslr/rSQLite/archive/refs/heads/main.zip), extract it, open a terminal in the extracted directory, and run:
+
+```bash
 pipx install .
 ```
 
@@ -42,13 +48,21 @@ The installation provides the following commands:
 - `rsqlite` — command-line client
 - `rsqlite-server` — database server
 
-On systems without `pipx`, rSQLite can also be installed using `pip`.
-
-For additional installation and configuration details, see [INSTALL.md](INSTALL.md).
+For complete installation and configuration instructions, see [INSTALL.md](INSTALL.md).
 
 ## Quick Start
 
-### 1. Start the server
+### 1. Initialize rSQLite
+
+Initialize the default rSQLite environment:
+
+```bash
+rsqlite --init
+```
+
+Initialization creates the default configuration files, identities, access-control settings, and database. It also attempts to install the NomadNet GUI files automatically. If GUI installation fails, the core initialization can still succeed; see [INSTALL.md](INSTALL.md) for manual GUI installation instructions.
+
+### 2. Start the server
 
 Start the server using its default configuration:
 
@@ -70,7 +84,7 @@ rsqlite-server -c /path/to/rsqlite-server.conf
 
 When the server starts, it displays its Reticulum Destination Hash. Configure this hash in the client configuration before connecting.
 
-### 2. Verify the client and Server Identities
+### 3. Verify the client and server identities
 
 To display the Reticulum Identity information used by the client, run:
 
@@ -84,12 +98,11 @@ To display the server Identity information and Destination Hash, run:
 rsqlite-server --print-identity
 ```
 
-The Identity Hash is used when configuring the server's access-control list.
-The Destination Hash is used by the client to connect to the serv
+The Identity Hash is used when configuring the server's access-control list. The Destination Hash is used by the client to connect to the server.
 
-Further details about Identity management and verification are provided in the User Manual.
+See [INSTALL.md](INSTALL.md) for installation and initialization details. More usage notes can be added here as the project develops.
 
-### 3. Connect to the server
+### 4. Connect to the server
 
 Start the command-line client:
 
@@ -97,7 +110,7 @@ Start the command-line client:
 rsqlite
 ```
 
-Select a configured server and enter SQL at the `rSQL>` prompt.
+Select a configured server and enter SQL at the `rSQL>` prompt. Enter `.help` at the prompt to display the available help information.
 
 For example:
 
@@ -107,17 +120,31 @@ SELECT sqlite_version();
 
 The client establishes a Reticulum Link to the selected server and executes SQL statements through the Request/Response mechanism.
 
+### Export a table from the command line
+
+The CLI can export a database table in CSV, JSON, or plain-text format:
+
+```text
+-e, --export TABLE       Export a database table
+-f, --format {csv,json,txt}
+-o, --output FILE        Output file path
+```
+
+For example, the export options let you select the table, choose the output format, and optionally specify the output file path.
+
 ### Graphical interface
 
-rSQLite also provides a graphical interface through NomadNet.
+rSQLite also provides a graphical interface through NomadNet. The GUI allows users to browse database tables and view records, insert and delete records, and use an integrated SQL shell through NomadNet's page-based interface.
 
-The GUI allows users to browse database tables and view records through NomadNet's page-based interface.
+The GUI uses the same underlying client/server communication model as the command-line client. For GUI installation and instructions on creating the NomadNet page symlink, see [INSTALL.md](INSTALL.md).
 
-The GUI uses the same underlying client/server communication model as the command-line client.
+NomadNet runs dynamic page scripts separately, so the GUI establishes a Reticulum Link when a page script starts, reuses it for requests handled during that execution, and closes it when the script finishes. Navigating to another page may therefore require a new Link. According to the [official Reticulum manual](https://reticulum.network/manual/understanding.html), establishing a Link involves three packets totalling approximately **297 bytes**, while keeping it open consumes about **0.45 bits per second**. Additional network traffic depends on the SQL requests, the size of their responses, and Reticulum's protocol overhead.
 
-**Reticulum Link lifecycle:** NomadNet executes dynamic page scripts separately. The GUI establishes a Link when a page script starts, reuses it for requests handled during that execution, and closes it when the script finishes. Navigating to another page may therefore require establishing a new Link.
+## Troubleshooting
 
-Further details about Link lifecycle and its implications for network traffic are documented in the User Manual.
+If the GUI fails to start with `ModuleNotFoundError: No module named 'rsqlite'`, NomadNet and rSQLite may be using separate Python environments.
+
+See [INSTALL.md](INSTALL.md#troubleshooting) for the explanation and workarounds.
 
 ## Configuration
 
@@ -135,13 +162,10 @@ Example:
 
 ```ini
 [identity]
-
 file = /home/USER/.reticulum/identities/rsqlite
 
 [server.local]
-
 name = SERVER_NAME
-
 destination_hash = SERVER_DESTINATION_HASH
 ```
 
@@ -163,11 +187,8 @@ Example:
 
 ```ini
 [server]
-
 identity = /home/USER/.rsqlite/identities/rsqlite-server
-
 database = /home/USER/.rsqlite/rsqlite.db
-
 allowed_identities = /home/USER/.rsqlite/config/allowed_identities
 ```
 
@@ -177,7 +198,7 @@ The server configuration defines:
 - The SQLite database file
 - The file containing authorized client Identity Hashes
 
-See [INSTALL.md](INSTALL.md) and the User Manual for additional configuration details.
+See [INSTALL.md](INSTALL.md) for installation and configuration details.
 
 ## Reticulum Configuration
 
@@ -205,6 +226,10 @@ When a client establishes a Link, the server checks the client's Identity agains
 
 Only authorized client identities are permitted to access the database through rSQLite.
 
+## Database Operations
+
+The command-line client accepts SQL statements at the `rSQL>` prompt. The NomadNet GUI provides a page-based interface for browsing tables and viewing records. The SQL operations available depend on the server implementation and the database; use SQL statements supported by SQLite.
+
 ## Deployment
 
 The server can be started manually or managed by an operating-system service manager for persistent or automatic execution.
@@ -217,18 +242,7 @@ rsqlite-server
 
 Service management is a deployment choice and is not required by rSQLite itself.
 
-## Download
-
-Clone the repository:
-
-```bash
-git clone https://github.com/mirkoslr/rSQLite.git
-cd rSQLite
-```
-
-Alternatively, download the source archive:
-
-**[Download rSQLite as ZIP](https://github.com/mirkoslr/rSQLite/archive/refs/heads/main.zip)**
+## Releases
 
 For versioned releases, see the project's [GitHub Releases](https://github.com/mirkoslr/rSQLite/releases) page.
 

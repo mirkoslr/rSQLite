@@ -29,7 +29,7 @@ def render(response):
     or status message."""
     
     if isinstance(response, str):
-        response = json.loads(response)
+       response = json.loads(response)
    
     if not response.get("ok", False):
         return "SQL error: " + response.get("error", "Unknown error")

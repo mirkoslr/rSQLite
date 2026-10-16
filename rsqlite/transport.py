@@ -8,6 +8,7 @@ Responsibilities:
 - Open and close a Link
 - Execute SQL requests through the Request/Response API
 """
+
 import RNS
 import time
 import threading

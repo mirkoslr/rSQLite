@@ -58,6 +58,9 @@ ORDER BY name;
 """
 
     if cmd == "schema":
+        if arg:
+            table_name = arg.replace('"', '""')
+            return f'PRAGMA table_info("{table_name}");'
         return """
 SELECT name, sql
 FROM sqlite_master
@@ -135,7 +138,7 @@ def execute_command(cmd, arg=None, servers=None):
             )
 
         return "\n".join(lines)
-
+    
     query = get_command_query(cmd, arg)
 
     # Ensure a query exists before execution, especially if commands

@@ -95,7 +95,7 @@ def sql_prompt(servers):
                 else:
                     print(formatter.render(result))
             continue
-
+        
         # Empty line: execute a single-line query.
         if not line and not lines:
             continue

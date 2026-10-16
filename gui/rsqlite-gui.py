@@ -91,11 +91,14 @@ def get_connection():
     return server_index, server
 
 def main():
-
+    """Render the rSQLite GUI, handle user actions, 
+    and close the Reticulum connection."""
     table_name = os.environ.get("var_table")
     action = os.environ.get("var_action")
     page = get_page_number()
 
+    print("#!c=0")
+    print("#!bg=000")
     print("# rSQLite")
     print()
     print("`F58aDatabase Browser`f")

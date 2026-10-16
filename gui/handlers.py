@@ -1,3 +1,19 @@
+"""
+Handle database operations and user interactions for the rSQLite NomadNet GUI.
+
+Responsibilities:
+    - Identify a table's primary key and validate submitted form fields.
+    - Read submitted form values from the environment and check required fields.
+    - Display table schemas and provide an interface for executing SQL queries.
+    - Handle record insertion, updating and deletion, including validation,
+      error reporting and operation confirmations.
+    - Browse table records with pagination and provide navigation between pages.
+    - Display available database tables and route user requests to the
+      appropriate handler based on the selected action.
+    - Coordinate database operations through the database module and display
+      results and interactive navigation links through the views and links modules.
+"""
+
 import os
 
 from rsqlite import shell
@@ -20,7 +36,10 @@ from views import (
 )
 
 def get_primary_key(schema_rows):
+    """Return the name of the primary key 
+    if it consists of a single column."""
     primary_keys = []
+
     for row in schema_rows:
         column_name = row[1]
         primary_key = row[5]
@@ -32,7 +51,10 @@ def get_primary_key(schema_rows):
 
 
 def get_submitted_fields(schema_rows):
+    """Collect submitted form values, 
+    excluding automatically generated integer primary keys."""
     values = {}
+
     for row in schema_rows:
         column_name = row[1]
         primary_key = row[5]
@@ -47,7 +69,9 @@ def get_submitted_fields(schema_rows):
 
 
 def validate_fields(schema_rows, submitted_fields, primary_key=None):
+    """Identify missing values in required fields that have no default."""
     errors = []
+
     for row in schema_rows:
         column_name = row[1]
         not_null = row[3]
@@ -65,7 +89,9 @@ def validate_fields(schema_rows, submitted_fields, primary_key=None):
 
 
 def handle_schema(table_name):
+    """Display the schema of the specified database table."""
     data = get_schema(table_name)
+
     print("Table Schema")
     print()
     print_rows(data["columns"], data["rows"])
@@ -97,6 +123,8 @@ def handle_sql(server_index):
 
 
 def handle_insert(table_name, server_index):
+    """Validate submitted fields, insert a record or 
+    display the insertion form."""
     schema = get_schema(table_name)
     schema_rows = schema["rows"]
     submitted_fields = get_submitted_fields(schema_rows)
@@ -121,6 +149,7 @@ def handle_insert(table_name, server_index):
 
 
 def handle_update(table_name, server_index):
+    """Load a record and update it after validating the submitted fields."""
     schema = get_schema(table_name)
     schema_rows = schema["rows"]
     primary_key = get_primary_key(schema_rows)
@@ -167,6 +196,8 @@ def handle_update(table_name, server_index):
 
 
 def handle_delete(table_name, server_index):
+    """Request deletion confirmation and delete the selected record 
+    when confirmed."""
     schema = get_schema(table_name)
     schema_rows = schema["rows"]
     primary_key = get_primary_key(schema_rows)
@@ -213,6 +244,7 @@ def handle_delete(table_name, server_index):
         ))
 
 def handle_browse(table_name, page, server_index):
+    """Display a paginated view of table records with navigation links."""
     schema = get_schema(table_name)
     primary_key = get_primary_key(schema["rows"])
 
@@ -308,6 +340,7 @@ def handle_tables(tables, server_index):
     print("`FEA4 ]`f")
 
 def handle_table_action(action, table_name, page, server_index):
+    """Dispatch the requested table action to its corresponding handler."""
     actions = {
         "browse": lambda: handle_browse(
             table_name, page, server_index

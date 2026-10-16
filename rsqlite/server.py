@@ -9,6 +9,7 @@ Responsibilities:
 - Use one SQLite connection per request for thread safety
   with Reticulum Request/Response worker threads
 """
+
 import argparse
 import json
 import sqlite3

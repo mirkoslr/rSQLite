@@ -19,3 +19,12 @@ rsqlite-server = "rsqlite.server:main"
 [tool.setuptools.packages.find]
 include = ["rsqlite*"]
 
+[tool.setuptools.data-files]
+"share/rsqlite/gui" = [
+    "gui/rsqlite-gui.py",
+    "gui/database.py",
+    "gui/handlers.py",
+    "gui/links.py",
+    "gui/views.py",
+]
+

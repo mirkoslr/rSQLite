@@ -28,8 +28,9 @@ def render(response):
     """Render a SQL query response as a formatted table 
     or status message."""
     
-    response = json.loads(response)
-
+    if isinstance(response, str):
+        response = json.loads(response)
+   
     if not response.get("ok", False):
         return "SQL error: " + response.get("error", "Unknown error")
 

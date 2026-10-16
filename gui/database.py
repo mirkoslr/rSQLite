@@ -1,9 +1,6 @@
-#!/usr/bin/env python3
-
 import json
 
 from rsqlite import transport
-
 
 def execute_sql(query):
     response = transport.execute(query)
@@ -66,6 +63,7 @@ def browse_table(table_name, limit=20, offset=0):
 
 
 def get_schema(table_name):
+    """Retrieve a table's schema, returning its columns and rows."""
     response = execute_sql(
         f'PRAGMA table_info("{table_name}")'
     )
@@ -195,6 +193,7 @@ def update_record(
         )
 
     return response
+
 
 def delete_record(
     table_name,

@@ -58,13 +58,8 @@ def load_server_config(filename):
         print("Missing [server] section.")
         sys.exit(1)
 
-    if "announce" not in config:
-        print("Missing [announce] section.")
-        sys.exit(1)
-
     server = config["server"]
-    announce = config["announce"]
-
+    
     return {
         "identity": server["identity"],
         "database": server["database"],

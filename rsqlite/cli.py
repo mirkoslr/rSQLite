@@ -11,10 +11,15 @@ Responsibilities:
 - Close the transport connection
 """
 
-import RNS
 import argparse
-import readline
-import json 
+import json
+
+import RNS
+
+try:
+    import readline  # noqa: F401 - enables line editing where available
+except ImportError:  # readline is unavailable in some Python builds, notably Windows
+    pass
 
 from pathlib import Path
 from datetime import date
@@ -25,6 +30,7 @@ from rsqlite import exporter
 from rsqlite import transport
 from rsqlite import shell
 from rsqlite.identity import prepare_identity
+from rsqlite.initializer import initialize_environment
 
 
 dispatch_command = shell.dispatch_command
@@ -135,6 +141,12 @@ def main():
     )
 
     parser.add_argument(
+        "--init",
+        action="store_true",
+        help="Create the default rSQLite environment and exit",
+    )
+
+    parser.add_argument(
         "--debug",
         action="store_true",
         help="Enable Reticulum debug logging"
@@ -166,6 +178,15 @@ def main():
     )
 
     args = parser.parse_args()
+
+    if args.init:
+        try:
+            initialize_environment()
+        except FileExistsError as exc:
+            parser.exit(1, f"Initialization stopped. {exc}\n")
+        except Exception as exc:
+            parser.exit(1, f"Initialization failed: {exc}\n")
+        return
 
     # Quiet by default, verbose only when debugging.
     transport.set_debug(args.debug)

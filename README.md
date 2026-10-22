@@ -120,6 +120,10 @@ SELECT sqlite_version();
 
 The client establishes a Reticulum Link to the selected server and executes SQL statements through the Request/Response mechanism.
 
+<p align="center">
+  <img src="docs/images/cli.png" width="70%" alt="rSQLite command-line query results">
+</p>
+
 ### Export a table from the command line
 
 The CLI can export a database table in CSV, JSON, or plain-text format:
@@ -132,9 +136,16 @@ The CLI can export a database table in CSV, JSON, or plain-text format:
 
 For example, the export options let you select the table, choose the output format, and optionally specify the output file path.
 
+
 ### Graphical interface
 
 rSQLite also provides a graphical interface through NomadNet. The GUI allows users to browse database tables and view records, insert and delete records, and use an integrated SQL shell through NomadNet's page-based interface.
+
+<p align="center">
+  <img src="docs/images/gui.shell.png" width="48%" alt="rSQLite SQL shell in NomadNet" style="vertical-align: top;">
+  <img src="docs/images/gui.insert.png" width="48%" alt="Updating a database record through the NomadNet GUI" style="vertical-align: top;">
+</p>
+
 
 The GUI uses the same underlying client/server communication model as the command-line client. For GUI installation and instructions on creating the NomadNet page symlink, see [INSTALL.md](INSTALL.md).
 
